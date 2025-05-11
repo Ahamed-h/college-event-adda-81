@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Custom colors for EventX
+				eventx: {
+					purple: '#8B5CF6',
+					orange: '#F97316',
+					'light-purple': '#E5DEFF',
+					'dark-purple': '#6E59A5',
 				}
 			},
 			borderRadius: {
