@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X, User, Triangle } from "lucide-react";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -23,6 +23,7 @@ const Navbar = () => {
     <nav className="bg-white shadow-sm py-4 px-4 md:px-8">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2">
+          <Triangle className="h-6 w-6 text-eventx-purple fill-eventx-orange stroke-eventx-purple" />
           <span className="text-2xl font-bold text-eventx-purple">Event<span className="text-eventx-orange">X</span></span>
         </Link>
 
