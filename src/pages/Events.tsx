@@ -81,7 +81,7 @@ const Events = () => {
   // Update search params when category changes
   const handleCategoryChange = (value: string) => {
     setSelectedCategory(value);
-    if (value) {
+    if (value && value !== "all") {
       searchParams.set("category", value);
     } else {
       searchParams.delete("category");
@@ -145,7 +145,7 @@ const Events = () => {
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Categories</SelectItem>
+                  <SelectItem value="all">All Categories</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category} value={category}>
                       {category}
@@ -162,7 +162,7 @@ const Events = () => {
                   <SelectValue placeholder="All Colleges" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Colleges</SelectItem>
+                  <SelectItem value="all">All Colleges</SelectItem>
                   {colleges.map((college) => (
                     <SelectItem key={college} value={college}>
                       {college}
@@ -179,7 +179,7 @@ const Events = () => {
                   <SelectValue placeholder="All Prices" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Prices</SelectItem>
+                  <SelectItem value="all">All Prices</SelectItem>
                   <SelectItem value="free">Free</SelectItem>
                   <SelectItem value="under500">Under ₹500</SelectItem>
                   <SelectItem value="500to1000">₹500 - ₹1000</SelectItem>
@@ -199,29 +199,29 @@ const Events = () => {
         {/* Active Filters */}
         {(selectedCategory || selectedCollege || priceRange) && (
           <div className="flex flex-wrap gap-2 mb-6">
-            {selectedCategory && (
+            {selectedCategory && selectedCategory !== "all" && (
               <Badge className="bg-eventx-light-purple text-eventx-purple">
                 {selectedCategory}
                 <button 
                   className="ml-1"
-                  onClick={() => handleCategoryChange("")}
+                  onClick={() => handleCategoryChange("all")}
                 >
                   &times;
                 </button>
               </Badge>
             )}
-            {selectedCollege && (
+            {selectedCollege && selectedCollege !== "all" && (
               <Badge className="bg-eventx-light-purple text-eventx-purple">
                 {selectedCollege}
                 <button 
                   className="ml-1"
-                  onClick={() => setSelectedCollege("")}
+                  onClick={() => setSelectedCollege("all")}
                 >
                   &times;
                 </button>
               </Badge>
             )}
-            {priceRange && (
+            {priceRange && priceRange !== "all" && (
               <Badge className="bg-eventx-light-purple text-eventx-purple">
                 {priceRange === "free" && "Free"}
                 {priceRange === "under500" && "Under ₹500"}
@@ -229,7 +229,7 @@ const Events = () => {
                 {priceRange === "above1000" && "Above ₹1000"}
                 <button 
                   className="ml-1"
-                  onClick={() => setPriceRange("")}
+                  onClick={() => setPriceRange("all")}
                 >
                   &times;
                 </button>
