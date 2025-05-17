@@ -30,3 +30,14 @@ export function getInitials(name: string): string {
     .join('')
     .toUpperCase();
 }
+
+export function calculateRevenueShare(revenue: number): {share: number, percentage: number} {
+  // Calculate share percentage: 5% if revenue > ₹250, 10% if revenue ≤ ₹250
+  const sharePercentage = revenue > 250 ? 5 : 10;
+  const share = (revenue * sharePercentage) / 100;
+  
+  return {
+    share,
+    percentage: sharePercentage
+  };
+}
