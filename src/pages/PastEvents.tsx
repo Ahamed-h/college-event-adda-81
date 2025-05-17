@@ -3,17 +3,31 @@ import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { pastEvents } from "@/data/mockPastEvents";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatCurrency, calculateRevenueShare } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, User, Star, QrCode, History, ImageIcon } from "lucide-react";
+import { Calendar, Clock, User, Star, ImageIcon, History, BadgeIndianRupee } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { events } from "@/data/mockEvents";
 import EventCard from "@/components/EventCard";
 
 const PastEvents = () => {
+  // State to track revenue inputs for each event
+  const [revenues, setRevenues] = useState<Record<string, number>>(
+    Object.fromEntries(pastEvents.map(event => [event.id, 0]))
+  );
+
+  // Handle revenue input change
+  const handleRevenueChange = (eventId: string, value: string) => {
+    const numValue = value === "" ? 0 : Number(value);
+    setRevenues(prev => ({
+      ...prev,
+      [eventId]: numValue
+    }));
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -88,6 +102,44 @@ const PastEvents = () => {
                           {event.joinedParticipants}/{event.totalParticipants} participants
                         </span>
                       </div>
+                    </div>
+                    
+                    {/* Revenue Share Calculator */}
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <div className="flex items-center gap-2 mb-3">
+                        <BadgeIndianRupee className="h-5 w-5 text-eventx-orange" />
+                        <h4 className="font-medium">Revenue Share Calculator</h4>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 mb-3">
+                        <label htmlFor={`revenue-${event.id}`} className="whitespace-nowrap text-sm">
+                          Event Revenue (₹):
+                        </label>
+                        <input
+                          id={`revenue-${event.id}`}
+                          type="number"
+                          min="0"
+                          value={revenues[event.id] || ""}
+                          onChange={(e) => handleRevenueChange(event.id, e.target.value)}
+                          className="border rounded px-2 py-1 text-sm w-24"
+                        />
+                      </div>
+                      
+                      {revenues[event.id] > 0 && (
+                        <div className="text-sm space-y-1">
+                          <p>
+                            <span className="font-medium">Share Percentage:</span>{" "}
+                            {calculateRevenueShare(revenues[event.id]).percentage}%
+                          </p>
+                          <p>
+                            <span className="font-medium">Your Share:</span>{" "}
+                            {formatCurrency(calculateRevenueShare(revenues[event.id]).share)}
+                          </p>
+                          <p className="text-xs text-gray-500 italic">
+                            (5% if revenue &gt; ₹250, 10% if revenue ≤ ₹250)
+                          </p>
+                        </div>
+                      )}
                     </div>
                     
                     <div>
