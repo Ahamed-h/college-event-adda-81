@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -18,6 +19,7 @@ import { formatDate, formatCurrency } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import PaymentQrModal from "@/components/PaymentQrModal";
+import { RegistrationForm } from "@/components/RegistrationForm";
 
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +27,7 @@ const EventDetail = () => {
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
+  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const event = events.find(e => e.id === id);
@@ -54,8 +57,23 @@ const EventDetail = () => {
       return;
     }
 
-    // Show payment QR modal
+    // Show registration form instead of payment modal directly
+    setShowRegistrationForm(true);
+  };
+
+  const handleRegistrationSubmit = (values: any) => {
+    // Process registration data
+    console.log("Registration data:", values);
+    
+    // Close registration form and show payment modal
+    setShowRegistrationForm(false);
     setShowPaymentModal(true);
+    
+    // Display success toast
+    toast({
+      title: "Registration Successful",
+      description: "Please complete payment to confirm your booking",
+    });
   };
 
   const handleShare = async () => {
@@ -137,87 +155,96 @@ const EventDetail = () => {
           {/* Sidebar (Booking) */}
           <div className="lg:w-1/3">
             <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold">Book Tickets</h3>
-                <div className="flex items-center">
-                  <BadgeIndianRupee className="h-5 w-5 text-eventx-orange" />
-                  <span className="text-2xl font-bold text-eventx-orange">{formatCurrency(event.price)}</span>
-                </div>
-              </div>
+              {showRegistrationForm ? (
+                <RegistrationForm 
+                  onSubmit={handleRegistrationSubmit} 
+                  eventTitle={event.title} 
+                />
+              ) : (
+                <>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-bold">Book Tickets</h3>
+                    <div className="flex items-center">
+                      <BadgeIndianRupee className="h-5 w-5 text-eventx-orange" />
+                      <span className="text-2xl font-bold text-eventx-orange">{formatCurrency(event.price)}</span>
+                    </div>
+                  </div>
 
-              <div className="mb-4">
-                <p className="text-sm text-gray-600 mb-1">
-                  Available: {event.seats.available} / {event.seats.total} seats
-                </p>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className={`${
-                      event.seats.available < event.seats.total * 0.2 
-                        ? "bg-red-500" 
-                        : event.seats.available < event.seats.total * 0.5 
-                          ? "bg-yellow-500" 
-                          : "bg-green-500"
-                    } h-2 rounded-full`} 
-                    style={{ width: `${(event.seats.available / event.seats.total) * 100}%` }}
-                  ></div>
-                </div>
-              </div>
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-600 mb-1">
+                      Available: {event.seats.available} / {event.seats.total} seats
+                    </p>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className={`${
+                          event.seats.available < event.seats.total * 0.2 
+                            ? "bg-red-500" 
+                            : event.seats.available < event.seats.total * 0.5 
+                              ? "bg-yellow-500" 
+                              : "bg-green-500"
+                        } h-2 rounded-full`} 
+                        style={{ width: `${(event.seats.available / event.seats.total) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
 
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-2" htmlFor="quantity">
-                  Number of Tickets
-                </label>
-                <div className="flex items-center">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    disabled={quantity <= 1}
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium mb-2" htmlFor="quantity">
+                      Number of Tickets
+                    </label>
+                    <div className="flex items-center">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        disabled={quantity <= 1}
+                      >
+                        -
+                      </Button>
+                      <span className="mx-4 font-medium w-8 text-center">{quantity}</span>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setQuantity(Math.min(event.seats.available, quantity + 1))}
+                        disabled={quantity >= event.seats.available}
+                      >
+                        +
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">Ticket Price</span>
+                      <span>{formatCurrency(event.price)}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">Quantity</span>
+                      <span>{quantity}</span>
+                    </div>
+                    <div className="flex justify-between py-2 font-medium">
+                      <span>Total</span>
+                      <span>{formatCurrency(event.price * quantity)}</span>
+                    </div>
+                  </div>
+
+                  <Button 
+                    className="w-full bg-eventx-purple hover:bg-eventx-dark-purple mb-4"
+                    onClick={handleBookTickets}
                   >
-                    -
+                    Book Now
                   </Button>
-                  <span className="mx-4 font-medium w-8 text-center">{quantity}</span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setQuantity(Math.min(event.seats.available, quantity + 1))}
-                    disabled={quantity >= event.seats.available}
+                  
+                  <Button 
+                    variant="outline" 
+                    className="w-full flex items-center justify-center gap-2"
+                    onClick={handleShare}
                   >
-                    +
+                    <Share2 className="h-4 w-4" /> 
+                    Share Event
                   </Button>
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <div className="flex justify-between py-2 border-b border-gray-100">
-                  <span className="text-gray-600">Ticket Price</span>
-                  <span>{formatCurrency(event.price)}</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-gray-100">
-                  <span className="text-gray-600">Quantity</span>
-                  <span>{quantity}</span>
-                </div>
-                <div className="flex justify-between py-2 font-medium">
-                  <span>Total</span>
-                  <span>{formatCurrency(event.price * quantity)}</span>
-                </div>
-              </div>
-
-              <Button 
-                className="w-full bg-eventx-purple hover:bg-eventx-dark-purple mb-4"
-                onClick={handleBookTickets}
-              >
-                Book Now
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                className="w-full flex items-center justify-center gap-2"
-                onClick={handleShare}
-              >
-                <Share2 className="h-4 w-4" /> 
-                Share Event
-              </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
