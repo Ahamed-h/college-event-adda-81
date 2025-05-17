@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, User, Star, QrCode, Gallery, History } from "lucide-react";
+import { Calendar, Clock, User, Star, QrCode, History, ImageIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { events } from "@/data/mockEvents";
 import EventCard from "@/components/EventCard";
@@ -130,7 +130,7 @@ const PastEvents = () => {
                   <CardFooter className="flex flex-col sm:flex-row gap-2">
                     {event.hasGallery && (
                       <Button variant="outline" className="w-full sm:w-auto flex gap-2 items-center">
-                        <Gallery className="h-4 w-4" />
+                        <ImageIcon className="h-4 w-4" />
                         <span>View Gallery</span>
                       </Button>
                     )}
