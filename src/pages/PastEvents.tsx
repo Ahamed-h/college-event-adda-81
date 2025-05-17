@@ -3,31 +3,25 @@ import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { pastEvents } from "@/data/mockPastEvents";
-import { formatDate, formatCurrency, calculateRevenueShare } from "@/lib/utils";
+import { formatDate, formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, User, Star, ImageIcon, History, BadgeIndianRupee } from "lucide-react";
+import { Calendar, Clock, User, Star, ImageIcon, History, BadgeIndianRupee, FileText } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { events } from "@/data/mockEvents";
 import EventCard from "@/components/EventCard";
+import { 
+  Pagination,
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from "@/components/ui/pagination";
 
 const PastEvents = () => {
-  // State to track revenue inputs for each event
-  const [revenues, setRevenues] = useState<Record<string, number>>(
-    Object.fromEntries(pastEvents.map(event => [event.id, 0]))
-  );
-
-  // Handle revenue input change
-  const handleRevenueChange = (eventId: string, value: string) => {
-    const numValue = value === "" ? 0 : Number(value);
-    setRevenues(prev => ({
-      ...prev,
-      [eventId]: numValue
-    }));
-  };
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -104,42 +98,15 @@ const PastEvents = () => {
                       </div>
                     </div>
                     
-                    {/* Revenue Share Calculator */}
+                    {/* Revenue Statement */}
                     <div className="bg-gray-50 p-4 rounded-lg">
                       <div className="flex items-center gap-2 mb-3">
                         <BadgeIndianRupee className="h-5 w-5 text-eventx-orange" />
-                        <h4 className="font-medium">Revenue Share Calculator</h4>
+                        <h4 className="font-medium">Revenue Earned</h4>
                       </div>
-                      
-                      <div className="flex items-center gap-2 mb-3">
-                        <label htmlFor={`revenue-${event.id}`} className="whitespace-nowrap text-sm">
-                          Event Revenue (₹):
-                        </label>
-                        <input
-                          id={`revenue-${event.id}`}
-                          type="number"
-                          min="0"
-                          value={revenues[event.id] || ""}
-                          onChange={(e) => handleRevenueChange(event.id, e.target.value)}
-                          className="border rounded px-2 py-1 text-sm w-24"
-                        />
-                      </div>
-                      
-                      {revenues[event.id] > 0 && (
-                        <div className="text-sm space-y-1">
-                          <p>
-                            <span className="font-medium">Share Percentage:</span>{" "}
-                            {calculateRevenueShare(revenues[event.id]).percentage}%
-                          </p>
-                          <p>
-                            <span className="font-medium">Your Share:</span>{" "}
-                            {formatCurrency(calculateRevenueShare(revenues[event.id]).share)}
-                          </p>
-                          <p className="text-xs text-gray-500 italic">
-                            (5% if revenue &gt; ₹250, 10% if revenue ≤ ₹250)
-                          </p>
-                        </div>
-                      )}
+                      <p className="text-sm">
+                        We received 10% of the ticket revenue from customers at this event.
+                      </p>
                     </div>
                     
                     <div>
@@ -190,6 +157,88 @@ const PastEvents = () => {
                 </Card>
               ))}
             </div>
+            
+            {/* Revenue Proof Section at the end of the page */}
+            <div className="mt-12 bg-white border rounded-lg p-6 shadow-sm">
+              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <FileText className="h-5 w-5 text-eventx-purple" />
+                Proof of Revenue Earning
+              </h3>
+              
+              <div className="space-y-4">
+                <div className="border-b pb-3">
+                  <h4 className="font-medium mb-2">Revenue Verification Policy</h4>
+                  <p className="text-sm text-gray-700">
+                    For each event, EventX collects 10% of ticket revenue directly from customers. 
+                    This revenue is tracked through our secure payment system and verified by independent auditors.
+                  </p>
+                </div>
+                
+                <div className="border-b pb-3">
+                  <h4 className="font-medium mb-2">Summary of Earnings (2025)</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      <div className="bg-gray-50 p-3 rounded">
+                        <p className="text-gray-500">Total Events</p>
+                        <p className="font-semibold text-lg">{pastEvents.length}</p>
+                      </div>
+                      <div className="bg-gray-50 p-3 rounded">
+                        <p className="text-gray-500">Revenue Share</p>
+                        <p className="font-semibold text-lg">10%</p>
+                      </div>
+                      <div className="bg-gray-50 p-3 rounded">
+                        <p className="text-gray-500">Total Participants</p>
+                        <p className="font-semibold text-lg">
+                          {pastEvents.reduce((sum, event) => sum + event.joinedParticipants, 0)}
+                        </p>
+                      </div>
+                      <div className="bg-gray-50 p-3 rounded">
+                        <p className="text-gray-500">Total Revenue</p>
+                        <p className="font-semibold text-lg">{formatCurrency(42500)}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="font-medium mb-2">Verification Documentation</h4>
+                  <div className="flex items-center gap-4 flex-wrap">
+                    <Button variant="outline" className="text-sm">
+                      <FileText className="h-4 w-4 mr-2" /> 
+                      Revenue Audit Report
+                    </Button>
+                    <Button variant="outline" className="text-sm">
+                      <FileText className="h-4 w-4 mr-2" /> 
+                      Payment Transactions
+                    </Button>
+                    <Button variant="outline" className="text-sm">
+                      <FileText className="h-4 w-4 mr-2" /> 
+                      Financial Statement
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <Pagination className="mt-8">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious href="#" />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#" isActive>1</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#">2</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#">3</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext href="#" />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </TabsContent>
         </Tabs>
       </div>
