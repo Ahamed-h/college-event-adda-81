@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
-import { Menu, X, User, Triangle } from "lucide-react";
+import { Menu, X, User, Triangle, History } from "lucide-react";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -31,6 +31,10 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-8">
           <Link to="/events" className="text-gray-700 hover:text-eventx-purple">
             Explore Events
+          </Link>
+          <Link to="/past-events" className="text-gray-700 hover:text-eventx-purple flex items-center gap-1">
+            <History className="h-4 w-4" />
+            Past Events
           </Link>
           {user?.role === "organizer" && (
             <Link to="/create-event" className="text-gray-700 hover:text-eventx-purple">
@@ -80,6 +84,14 @@ const Navbar = () => {
               onClick={toggleMenu}
             >
               Explore Events
+            </Link>
+            <Link 
+              to="/past-events" 
+              className="text-gray-700 hover:text-eventx-purple py-2 flex items-center gap-1"
+              onClick={toggleMenu}
+            >
+              <History className="h-4 w-4" />
+              Past Events
             </Link>
             {user?.role === "organizer" && (
               <Link 

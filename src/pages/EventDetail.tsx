@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -18,6 +17,7 @@ import { events } from "@/data/mockEvents";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
+import PaymentQrModal from "@/components/PaymentQrModal";
 
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +25,7 @@ const EventDetail = () => {
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const event = events.find(e => e.id === id);
 
@@ -53,11 +54,8 @@ const EventDetail = () => {
       return;
     }
 
-    // In a real app, this would navigate to checkout or make an API call
-    toast({
-      title: "Tickets Reserved!",
-      description: `You've reserved ${quantity} ticket${quantity > 1 ? 's' : ''} for ${event.title}`,
-    });
+    // Show payment QR modal
+    setShowPaymentModal(true);
   };
 
   const handleShare = async () => {
@@ -226,6 +224,15 @@ const EventDetail = () => {
       </div>
 
       <Footer />
+      
+      {/* Payment Modal */}
+      <PaymentQrModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        eventTitle={event.title}
+        amount={event.price * quantity}
+        quantity={quantity}
+      />
     </div>
   );
 };
