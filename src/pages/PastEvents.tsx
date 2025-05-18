@@ -194,7 +194,7 @@ const PastEvents = () => {
                       </div>
                       <div className="bg-gray-50 p-3 rounded">
                         <p className="text-gray-500">Total Revenue</p>
-                        <p className="font-semibold text-lg">{formatCurrency(42500)}</p>
+                        <p className="font-semibold text-lg">{formatCurrency(2000)}</p>
                       </div>
                     </div>
                   </div>
@@ -249,3 +249,4 @@ const PastEvents = () => {
 };
 
 export default PastEvents;
+
