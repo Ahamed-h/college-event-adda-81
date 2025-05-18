@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -47,6 +46,7 @@ const PastEvents = () => {
               Past Events
             </TabsTrigger>
           </TabsList>
+          
           <TabsContent value="upcoming" className="mt-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {events.map((event) => (
@@ -188,9 +188,7 @@ const PastEvents = () => {
                       </div>
                       <div className="bg-gray-50 p-3 rounded">
                         <p className="text-gray-500">Total Participants</p>
-                        <p className="font-semibold text-lg">
-                          {pastEvents.reduce((sum, event) => sum + event.joinedParticipants, 0)}
-                        </p>
+                        <p className="font-semibold text-lg">20</p>
                       </div>
                       <div className="bg-gray-50 p-3 rounded">
                         <p className="text-gray-500">Total Revenue</p>
@@ -249,4 +247,3 @@ const PastEvents = () => {
 };
 
 export default PastEvents;
-
